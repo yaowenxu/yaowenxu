@@ -2,7 +2,7 @@
 - I’m currently working on Cache System and File System.
 - I’m currently learning golang/cpp for projects.
 - I like interesting things and interesting friends.
-- Thank you for your correction! 😄 I hope I could be much better! 
+- I hope I could be much better! 
 
 <!--
 **yaowenxu/yaowenxu** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
