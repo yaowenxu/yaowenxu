@@ -1,6 +1,6 @@
 ### Thinking, Improving and Coding 
 - I’m currently working on Cache System and File System.
-- I’m currently learning golang/cpp for projects.
+- I’m currently learning golang/cpp for project⚡.
 - I like interesting things and interesting friends.
 
 <!--
