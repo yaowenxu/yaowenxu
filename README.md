@@ -1,6 +1,6 @@
 ### Thinking, Improving and Coding 
 - I’m currently working on Memory System and AI System.
-- I’m currently learning golang/cpp for project⚡.
+- I’m currently using golang/cpp for project⚡.
 - I like interesting things and interesting friends.
 
 <!--
