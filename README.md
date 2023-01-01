@@ -1,7 +1,7 @@
-### Thinking, Improving and Coding ✨
+### Thinking, Coding, Writing, and Improving. ✨
 - I’m currently working on Memory System and AI System.
-- I’m currently using python/cpp for projects.
-- I like interesting things and interesting friends.
+- I’m presently using c++ and python for projects.
+- I like interesting things and exciting friends.
 
 <!--
 **yaowenxu/yaowenxu** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
