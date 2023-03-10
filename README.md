@@ -1,6 +1,6 @@
 ### Thinking, Coding, Writing, and Improving. ✨
-- I’m currently working on Memory System and AI System.
-- I’m presently using c++ and python for projects.
+- I’m currently working on Memory System and Cache System.
+- I’m presently using c/c++ and python for projects.
 - I like interesting things and exciting friends.
 
 <!--
