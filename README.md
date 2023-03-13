@@ -1,5 +1,5 @@
 ### Thinking, Coding, Writing, and Improving. ✨
-- I’m currently working on Memory/Cache System and AI Systems.
+- I’m currently working on Memory/Cache Systems and AI Systems.
 - I’m presently using c/c++ and python for projects.
 - I like interesting things and exciting questions.
 
