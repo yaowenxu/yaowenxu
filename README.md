@@ -1,4 +1,4 @@
-I’ll be offline for a while, but feel free to connect with me on [LinkedIn](https://www.linkedin.com/in/yaowenxu)! 👋 
+I’ll be offline for a while, but feel free to connect with me on [X](https://x.com/MichaelXu25)! 👋 
 
 <!--
 ## Thinking, Coding, Writing, and Improving. ✨
