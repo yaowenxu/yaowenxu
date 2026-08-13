@@ -1,0 +1,14 @@
+{
+  "name": "profile-readme-preview",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Local GitHub-style preview server for the profile README.md",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "github-markdown-css": "5.8.1",
+    "markdown-it": "14.1.0"
+  }
+}
