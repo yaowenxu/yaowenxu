@@ -1,0 +1,11 @@
+# title: Typing line
+# kind: typewriter
+# fontSize: 16
+# lineHeight: 28
+# period: 4.5
+
+Thinking, Coding, Writing, and Improving.
+# ---
+Built with Cursor, shown in characters.
+# ---
+Always learning. Always shipping.

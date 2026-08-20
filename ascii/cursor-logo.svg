@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="697" height="260" viewBox="0 0 697 260" role="img" aria-labelledby="title">
+  <title id="title">Cursor character logo</title>
+  <style>
+    :root { color-scheme: light dark; }
+    .fg { fill: #1f2328; }
+    .muted { fill: #656d76; }
+    @media (prefers-color-scheme: dark) {
+      .fg { fill: #e6edf3; }
+      .muted { fill: #8b949e; }
+    }
+    text {
+      font-family: "Courier New", Courier, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-kerning: none;
+      font-variant-ligatures: none;
+    }
+    text { font-size: 13px; }
+    .line {
+      clip-path: inset(0 100% 0 0);
+      animation: reveal 0.65s steps(78, end) forwards;
+    }
+    @keyframes reveal { to { clip-path: inset(0 0 0 0); } }
+    .blink {
+      animation: blink 1.05s step-end infinite;
+      animation-delay: 1.8s;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+  </style>
+    <text class="fg line" x="24" y="31" xml:space="preserve" style="animation-delay:0.05s" textLength="636.7" lengthAdjust="spacing">              ██    ▒▒                                                        </text>
+    <text class="fg line" x="24" y="45" xml:space="preserve" style="animation-delay:0.13s" textLength="636.7" lengthAdjust="spacing">          ██████    ▒▒▒▒▒▒                                                    </text>
+    <text class="fg line" x="24" y="59" xml:space="preserve" style="animation-delay:0.21s" textLength="636.7" lengthAdjust="spacing">      ██████████    ▒▒▒▒▒▒▒▒▒▒                                                </text>
+    <text class="fg line" x="24" y="73" xml:space="preserve" style="animation-delay:0.29s" textLength="636.7" lengthAdjust="spacing">  ██████████████    ▒▒▒▒▒▒▒▒▒▒▒▒▒▒                                            </text>
+    <text class="fg line" x="24" y="87" xml:space="preserve" style="animation-delay:0.37s" textLength="636.7" lengthAdjust="spacing">████████████████    ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒                                          </text>
+    <text class="fg line" x="24" y="101" xml:space="preserve" style="animation-delay:0.45s" textLength="636.7" lengthAdjust="spacing">████████████████    ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒       ____ _   _ ____  ____   ___  ____  </text>
+    <text class="fg line" x="24" y="115" xml:space="preserve" style="animation-delay:0.53s" textLength="636.7" lengthAdjust="spacing">████████████████    ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒      / ___| | | |  _ \/ ___| / _ \|  _ \ </text>
+    <text class="fg line" x="24" y="129" xml:space="preserve" style="animation-delay:0.61s" textLength="636.7" lengthAdjust="spacing">████████████████    ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒     | |   | | | | |_) \___ \| | | | |_) |</text>
+    <text class="fg line" x="24" y="143" xml:space="preserve" style="animation-delay:0.69s" textLength="636.7" lengthAdjust="spacing">██████████████  ░░░░  ▒▒▒▒▒▒▒▒▒▒▒▒▒▒     | |___| |_| |  _ &lt; ___) | |_| |  _ &lt; </text>
+    <text class="fg line" x="24" y="157" xml:space="preserve" style="animation-delay:0.77s" textLength="636.7" lengthAdjust="spacing">██████████  ░░░░░░░░░░░░  ▒▒▒▒▒▒▒▒▒▒      \____|\___/|_| \_\____/ \___/|_| \_\<tspan class="blink">█</tspan></text>
+    <text class="fg line" x="24" y="171" xml:space="preserve" style="animation-delay:0.85s" textLength="636.7" lengthAdjust="spacing">██████  ░░░░░░░░░░░░░░░░░░░░  ▒▒▒▒▒▒                                          </text>
+    <text class="fg line" x="24" y="185" xml:space="preserve" style="animation-delay:0.93s" textLength="636.7" lengthAdjust="spacing">██  ░░░░░░░░░░░░░░░░░░░░░░░░░░░░  ▒▒                                          </text>
+    <text class="fg line" x="24" y="199" xml:space="preserve" style="animation-delay:1.01s" textLength="636.7" lengthAdjust="spacing">    ░░░░░░░░░░░░░░░░░░░░░░░░░░░░                                              </text>
+    <text class="fg line" x="24" y="213" xml:space="preserve" style="animation-delay:1.09s" textLength="636.7" lengthAdjust="spacing">        ░░░░░░░░░░░░░░░░░░░░                                                  </text>
+    <text class="fg line" x="24" y="227" xml:space="preserve" style="animation-delay:1.17s" textLength="636.7" lengthAdjust="spacing">            ░░░░░░░░░░░░                                                      </text>
+    <text class="fg line" x="24" y="241" xml:space="preserve" style="animation-delay:1.25s" textLength="636.7" lengthAdjust="spacing">                ░░░░                                                          </text>
+</svg>

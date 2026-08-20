@@ -1,0 +1,23 @@
+{
+  "generatedBy": "ascii/generate.mjs",
+  "items": [
+    {
+      "id": "cursor-logo",
+      "title": "Cursor character logo",
+      "svg": "cursor-logo.svg",
+      "source": "src/cursor-logo.txt"
+    },
+    {
+      "id": "typing-line",
+      "title": "Typing line",
+      "svg": "typing-line.svg",
+      "source": "src/typing-line.txt"
+    },
+    {
+      "id": "signal",
+      "title": "Character wave",
+      "svg": "signal.svg",
+      "source": "src/signal.txt"
+    }
+  ]
+}

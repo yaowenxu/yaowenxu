@@ -7,6 +7,7 @@
 const http = require("http");
 const fs = require("fs");
 const path = require("path");
+const { URL } = require("url");
 const MarkdownIt = require("markdown-it");
 
 const HOST = process.env.PREVIEW_HOST || "0.0.0.0";
@@ -16,6 +17,41 @@ const README_PATH = path.join(REPO_ROOT, "README.md");
 const CSS_PATH = require.resolve("github-markdown-css/github-markdown.css");
 
 const md = new MarkdownIt({ html: true, linkify: true, typographer: true });
+
+const MIME = {
+  ".svg": "image/svg+xml; charset=utf-8",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".gif": "image/gif",
+  ".webp": "image/webp",
+  ".txt": "text/plain; charset=utf-8",
+  ".md": "text/markdown; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
+};
+
+function isInsideRepo(filePath) {
+  const rel = path.relative(REPO_ROOT, filePath);
+  return rel !== ".." && !rel.startsWith(`..${path.sep}`) && !path.isAbsolute(rel);
+}
+
+function serveStatic(req, res, pathname) {
+  const relative = pathname.replace(/^\/+/, "");
+  const filePath = path.normalize(path.join(REPO_ROOT, relative));
+  if (!isInsideRepo(filePath)) {
+    res.writeHead(403, { "Content-Type": "text/plain" });
+    res.end("Forbidden");
+    return true;
+  }
+  const ext = path.extname(filePath).toLowerCase();
+  const mime = MIME[ext];
+  if (!mime || !fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+    return false;
+  }
+  res.writeHead(200, { "Content-Type": mime, "Cache-Control": "no-store" });
+  fs.createReadStream(filePath).pipe(res);
+  return true;
+}
 
 function renderPage() {
   const source = fs.readFileSync(README_PATH, "utf8");
@@ -43,9 +79,13 @@ ${body}
 }
 
 const server = http.createServer((req, res) => {
-  if (req.url === "/healthz") {
+  const pathname = new URL(req.url, `http://${HOST}:${PORT}`).pathname;
+  if (pathname === "/healthz") {
     res.writeHead(200, { "Content-Type": "text/plain" });
     res.end("ok");
+    return;
+  }
+  if (pathname !== "/" && serveStatic(req, res, pathname)) {
     return;
   }
   try {

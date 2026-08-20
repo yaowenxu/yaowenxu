@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="449" height="48" viewBox="0 0 449 48" role="img" aria-labelledby="title">
+  <title id="title">Typing line</title>
+  <style>
+    :root { color-scheme: light dark; }
+    .fg { fill: #1f2328; }
+    .muted { fill: #656d76; }
+    @media (prefers-color-scheme: dark) {
+      .fg { fill: #e6edf3; }
+      .muted { fill: #8b949e; }
+    }
+    text {
+      font-family: "Courier New", Courier, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-kerning: none;
+      font-variant-ligatures: none;
+    }
+    text { font-size: 16px; }
+    .phrase {
+      opacity: 0;
+      clip-path: inset(0 100% 0 0);
+      animation: type 13.5s steps(41, end) infinite;
+    }
+    @keyframes type {
+      0% { opacity: 0; clip-path: inset(0 100% 0 0); }
+      1% { opacity: 1; clip-path: inset(0 100% 0 0); }
+      26.67% { opacity: 1; clip-path: inset(0 0 0 0); }
+      31.11% { opacity: 1; clip-path: inset(0 100% 0 0); }
+      33.33%, 100% { opacity: 0; clip-path: inset(0 100% 0 0); }
+    }
+    .blink { animation: blink 1.05s step-end infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+  </style>
+    <text class="fg phrase" x="16" y="26" xml:space="preserve" style="animation-delay:0.00s" textLength="416.6" lengthAdjust="spacing">Thinking, Coding, Writing, and Improving.<tspan class="blink">█</tspan></text>
+    <text class="fg phrase" x="16" y="26" xml:space="preserve" style="animation-delay:-9.00s" textLength="416.6" lengthAdjust="spacing">Built with Cursor, shown in characters.  <tspan class="blink">█</tspan></text>
+    <text class="fg phrase" x="16" y="26" xml:space="preserve" style="animation-delay:-4.50s" textLength="416.6" lengthAdjust="spacing">Always learning. Always shipping.        <tspan class="blink">█</tspan></text>
+</svg>
