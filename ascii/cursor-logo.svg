@@ -18,14 +18,12 @@
     .line { animation: none; }
     @media (prefers-reduced-motion: no-preference) {
       .line {
-        animation: reveal 10s steps(78, end) infinite;
+        animation: reveal 0.9s steps(78, end) both;
       }
     }
     @keyframes reveal {
-      0% { clip-path: inset(0 100% 0 0); }
-      10% { clip-path: inset(0 0 0 0); }
-      88% { clip-path: inset(0 0 0 0); }
-      100% { clip-path: inset(0 100% 0 0); }
+      from { clip-path: inset(0 100% 0 0); }
+      to { clip-path: inset(0 0 0 0); }
     }
     .blink { animation: none; }
     @media (prefers-reduced-motion: no-preference) {

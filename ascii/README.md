@@ -5,7 +5,7 @@ with CSS motion (no JavaScript), so it plays inside `README.md`.
 
 The homepage keeps two pieces:
 
-- Cursor character logo (canonical mark, typed in a loop)
+- Cursor character logo (canonical mark, typed in once with a blinking cursor)
 - a one-line status that says the page is currently building with Cursor
 
 ## Show on the homepage

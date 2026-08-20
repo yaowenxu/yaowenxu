@@ -178,7 +178,6 @@ function buildCursorLogoSvg() {
   const rightTop = Math.floor((padded.length - right.length) / 2);
   const blinkRow = rightTop + lastMark;
   const textLength = ((cols + 1) * charW).toFixed(1);
-  const cycle = 10;
 
   const body = padded
     .map((line, i) => {
@@ -205,14 +204,12 @@ function buildCursorLogoSvg() {
     extraCss: `.line { animation: none; }
     @media (prefers-reduced-motion: no-preference) {
       .line {
-        animation: reveal ${cycle}s steps(${cols}, end) infinite;
+        animation: reveal 0.9s steps(${cols}, end) both;
       }
     }
     @keyframes reveal {
-      0% { clip-path: inset(0 100% 0 0); }
-      10% { clip-path: inset(0 0 0 0); }
-      88% { clip-path: inset(0 0 0 0); }
-      100% { clip-path: inset(0 100% 0 0); }
+      from { clip-path: inset(0 100% 0 0); }
+      to { clip-path: inset(0 0 0 0); }
     }
     .blink { animation: none; }
     @media (prefers-reduced-motion: no-preference) {
