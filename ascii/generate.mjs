@@ -166,7 +166,9 @@ function buildCursorLogoSvg() {
   const right = CURSOR_WORDMARK;
   const lines = joinHorizontal(logo, right, 5);
   const cols = Math.max(...lines.map(visibleLen));
-  const padded = lines.map((line) => padEndVisible(line, cols));
+  // Pad every row to cols+1 so the blink glyph can replace the last cell
+  // without changing textLength / column spacing on the other rows.
+  const padded = lines.map((line) => padEndVisible(line, cols + 1));
   const fontSize = 13;
   const lineHeight = 14;
   const padX = 24;
@@ -183,13 +185,13 @@ function buildCursorLogoSvg() {
     .map((line, i) => {
       const y = padY + fontSize + i * lineHeight;
       const delay = (i * 0.05).toFixed(2);
-      const extra = i === blinkRow ? `<tspan class="blink">█</tspan>` : "";
+      const blinking = i === blinkRow;
       return textEl({
         cls: "fg line",
         x: padX,
         y,
-        line,
-        extra,
+        line: blinking ? line.slice(0, -1) : line,
+        extra: blinking ? `<tspan class="blink">█</tspan>` : "",
         style: `animation-delay:${delay}s`,
         textLength,
       });
@@ -385,6 +387,27 @@ function writeFile(rel, contents) {
   return dest;
 }
 
+function decodeXml(text) {
+  return text
+    .replaceAll("&lt;", "<")
+    .replaceAll("&gt;", ">")
+    .replaceAll("&amp;", "&");
+}
+
+function logoLineGlyphCounts(svg) {
+  return [...svg.matchAll(/<text class="fg line"[^>]*>([\s\S]*?)<\/text>/g)].map(
+    ([, inner]) => visibleLen(decodeXml(inner.replace(/<[^>]+>/g, ""))),
+  );
+}
+
+function assertAlignedLogoLines(svg) {
+  const counts = logoLineGlyphCounts(svg);
+  if (!counts.length) throw new Error("logo SVG has no text lines");
+  if (counts.some((n) => n !== counts[0])) {
+    throw new Error(`logo glyph counts diverge: ${counts.join(",")}`);
+  }
+}
+
 function buildFromSource(id, source) {
   const { meta } = parseFrontMatter(source);
   if (meta.kind === "typewriter") return buildTypewriterSvg(id, source);
@@ -416,7 +439,9 @@ function main() {
       source: "src/cursor-logo.txt",
     },
   ];
-  writeFile("cursor-logo.svg", buildCursorLogoSvg());
+  const logoSvg = buildCursorLogoSvg();
+  writeFile("cursor-logo.svg", logoSvg);
+  assertAlignedLogoLines(logoSvg);
 
   const srcDir = path.join(ROOT, "src");
   const sources = fs
