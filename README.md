@@ -1,7 +1,7 @@
 <div align="center">
-  <img src="ascii/cursor-logo.svg" alt="Cursor character logo" />
+  <img src="ascii/cursor-logo.svg" width="697" height="260" alt="Cursor character logo" />
   <br />
-  <img src="ascii/typing-line.svg" alt="building with Cursor" />
+  <img src="ascii/typing-line.svg" width="280" height="46" alt="building with Cursor" />
 </div>
 
 I’ll be offline for a while, but feel free to drop me a message anytime via [X](https://x.com/MichaelXu25). ✨

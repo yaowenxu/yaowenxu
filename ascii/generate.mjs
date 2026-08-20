@@ -155,6 +155,7 @@ function svgDoc({ title, width, height, fontSize, extraCss, body }) {
     text { font-size: ${fontSize}px; }
     ${extraCss}
   </style>
+  <rect width="100%" height="100%" fill="transparent"/>
 ${body}
 </svg>
 `;
@@ -177,12 +178,12 @@ function buildCursorLogoSvg() {
   const rightTop = Math.floor((padded.length - right.length) / 2);
   const blinkRow = rightTop + lastMark;
   const textLength = ((cols + 1) * charW).toFixed(1);
-  const cycle = 8.5;
+  const cycle = 10;
 
   const body = padded
     .map((line, i) => {
       const y = padY + fontSize + i * lineHeight;
-      const delay = (i * 0.07).toFixed(2);
+      const delay = (i * 0.05).toFixed(2);
       const extra = i === blinkRow ? `<tspan class="blink">█</tspan>` : "";
       return textEl({
         cls: "fg line",
@@ -209,8 +210,8 @@ function buildCursorLogoSvg() {
     }
     @keyframes reveal {
       0% { clip-path: inset(0 100% 0 0); }
-      16% { clip-path: inset(0 0 0 0); }
-      84% { clip-path: inset(0 0 0 0); }
+      10% { clip-path: inset(0 0 0 0); }
+      88% { clip-path: inset(0 0 0 0); }
       100% { clip-path: inset(0 100% 0 0); }
     }
     .blink { animation: none; }
