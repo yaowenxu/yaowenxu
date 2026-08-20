@@ -1,0 +1,11 @@
+# title: building with Cursor
+# kind: typewriter
+# fontSize: 16
+# lineHeight: 26
+# period: 3.6
+
+building with Cursor
+# ---
+thinking with Cursor
+# ---
+shipping with Cursor
