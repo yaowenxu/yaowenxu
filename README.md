@@ -1,9 +1,7 @@
 <div align="center">
   <img src="ascii/cursor-logo.svg" alt="Cursor character logo" />
   <br />
-  <img src="ascii/typing-line.svg" alt="Typing character animation" />
-  <br />
-  <img src="ascii/signal.svg" alt="Character wave animation" />
+  <img src="ascii/typing-line.svg" alt="building with Cursor" />
 </div>
 
 I’ll be offline for a while, but feel free to drop me a message anytime via [X](https://x.com/MichaelXu25). ✨

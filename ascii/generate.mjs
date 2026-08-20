@@ -177,16 +177,15 @@ function buildCursorLogoSvg() {
   const rightTop = Math.floor((padded.length - right.length) / 2);
   const blinkRow = rightTop + lastMark;
   const textLength = ((cols + 1) * charW).toFixed(1);
+  const cycle = 8.5;
 
   const body = padded
     .map((line, i) => {
       const y = padY + fontSize + i * lineHeight;
-      const delay = (0.05 + i * 0.08).toFixed(2);
-      const cls = "fg line";
-      const extra =
-        i === blinkRow ? `<tspan class="blink">█</tspan>` : "";
+      const delay = (i * 0.07).toFixed(2);
+      const extra = i === blinkRow ? `<tspan class="blink">█</tspan>` : "";
       return textEl({
-        cls,
+        cls: "fg line",
         x: padX,
         y,
         line,
@@ -202,14 +201,21 @@ function buildCursorLogoSvg() {
     width,
     height,
     fontSize,
-    extraCss: `.line {
-      clip-path: inset(0 100% 0 0);
-      animation: reveal 0.65s steps(${cols}, end) forwards;
+    extraCss: `.line { animation: none; }
+    @media (prefers-reduced-motion: no-preference) {
+      .line {
+        animation: reveal ${cycle}s steps(${cols}, end) infinite;
+      }
     }
-    @keyframes reveal { to { clip-path: inset(0 0 0 0); } }
-    .blink {
-      animation: blink 1.05s step-end infinite;
-      animation-delay: 1.8s;
+    @keyframes reveal {
+      0% { clip-path: inset(0 100% 0 0); }
+      16% { clip-path: inset(0 0 0 0); }
+      84% { clip-path: inset(0 0 0 0); }
+      100% { clip-path: inset(0 100% 0 0); }
+    }
+    .blink { animation: none; }
+    @media (prefers-reduced-motion: no-preference) {
+      .blink { animation: blink 1.05s step-end infinite; }
     }
     @keyframes blink { 50% { opacity: 0; } }`,
     body,
@@ -279,10 +285,14 @@ function buildTypewriterSvg(id, source) {
     width,
     height,
     fontSize,
-    extraCss: `.phrase {
-      opacity: 0;
-      clip-path: inset(0 100% 0 0);
-      animation: type ${total}s steps(${cols}, end) infinite;
+    extraCss: `.phrase:nth-of-type(1) { opacity: 1; }
+    .phrase { opacity: 0; }
+    @media (prefers-reduced-motion: no-preference) {
+      .phrase {
+        opacity: 0;
+        clip-path: inset(0 100% 0 0);
+        animation: type ${total}s steps(${cols}, end) infinite;
+      }
     }
     @keyframes type {
       0% { opacity: 0; clip-path: inset(0 100% 0 0); }
@@ -291,8 +301,15 @@ function buildTypewriterSvg(id, source) {
       ${hide}% { opacity: 1; clip-path: inset(0 100% 0 0); }
       ${slot}%, 100% { opacity: 0; clip-path: inset(0 100% 0 0); }
     }
-    .blink { animation: blink 1.05s step-end infinite; }
-    @keyframes blink { 50% { opacity: 0; } }`,
+    .blink { animation: none; }
+    @media (prefers-reduced-motion: no-preference) {
+      .blink { animation: blink 1.05s step-end infinite; }
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .phrase { animation: none; }
+      .phrase:nth-of-type(1) { opacity: 1; clip-path: none; }
+    }`,
     body: nodes,
   });
 }
@@ -342,47 +359,25 @@ function buildFramesSvg(id, source) {
     width,
     height,
     fontSize,
-    extraCss: `.frame {
-      opacity: 0;
-      animation: cycle ${dur.toFixed(2)}s steps(1, end) infinite;
+    extraCss: `.frame:nth-of-type(1) { opacity: 1; }
+    .frame { opacity: 0; }
+    @media (prefers-reduced-motion: no-preference) {
+      .frame {
+        opacity: 0;
+        animation: cycle ${dur.toFixed(2)}s steps(1, end) infinite;
+      }
     }
     @keyframes cycle {
       0% { opacity: 1; }
       ${slice}% { opacity: 0; }
       100% { opacity: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .frame { animation: none; opacity: 0; }
+      .frame:nth-of-type(1) { opacity: 1; }
     }`,
     body: nodes,
   });
-}
-
-function makeWaveSource() {
-  const width = 52;
-  const height = 9;
-  const frames = 16;
-  const amp = (height - 1) / 2.35;
-  const mid = (height - 1) / 2;
-  const out = [];
-  for (let t = 0; t < frames; t++) {
-    const grid = Array.from({ length: height }, () => Array(width).fill(" "));
-    for (let x = 0; x < width; x++) {
-      const phase = (x / width) * Math.PI * 2 + (t / frames) * Math.PI * 2;
-      const y = Math.round(mid + Math.sin(phase) * amp);
-      grid[y][x] = "█";
-      const y2 = Math.round(mid + Math.sin(phase) * amp * 0.55);
-      if (grid[y2][x] === " ") grid[y2][x] = "*";
-    }
-    out.push(grid.map((row) => row.join("").replace(/\s+$/, "")).join("\n"));
-  }
-  return [
-    "# title: Character wave",
-    "# kind: frames",
-    "# fps: 10",
-    "# fontSize: 13",
-    "# lineHeight: 14",
-    "",
-    out.join("\n# ---\n"),
-    "",
-  ].join("\n");
 }
 
 function writeFile(rel, contents) {
@@ -390,6 +385,13 @@ function writeFile(rel, contents) {
   fs.mkdirSync(path.dirname(dest), { recursive: true });
   fs.writeFileSync(dest, contents);
   return dest;
+}
+
+function buildFromSource(id, source) {
+  const { meta } = parseFrontMatter(source);
+  if (meta.kind === "typewriter") return buildTypewriterSvg(id, source);
+  if (meta.kind === "frames") return buildFramesSvg(id, source);
+  throw new Error(`unknown kind "${meta.kind || ""}" in ${id}`);
 }
 
 function main() {
@@ -408,44 +410,38 @@ function main() {
     ].join("\n"),
   );
 
-  const typingPath = path.join(ROOT, "src/typing-line.txt");
-  if (!fs.existsSync(typingPath)) {
-    throw new Error("missing ascii/src/typing-line.txt");
-  }
-  const typingSource = fs.readFileSync(typingPath, "utf8");
-  const waveSource = makeWaveSource();
-  writeFile("src/signal.txt", waveSource);
-
+  const items = [
+    {
+      id: "cursor-logo",
+      title: "Cursor character logo",
+      svg: "cursor-logo.svg",
+      source: "src/cursor-logo.txt",
+    },
+  ];
   writeFile("cursor-logo.svg", buildCursorLogoSvg());
-  writeFile("typing-line.svg", buildTypewriterSvg("typing-line", typingSource));
-  writeFile("signal.svg", buildFramesSvg("signal", waveSource));
 
-  const manifest = {
-    generatedBy: "ascii/generate.mjs",
-    items: [
-      {
-        id: "cursor-logo",
-        title: "Cursor character logo",
-        svg: "cursor-logo.svg",
-        source: "src/cursor-logo.txt",
-      },
-      {
-        id: "typing-line",
-        title: "Typing line",
-        svg: "typing-line.svg",
-        source: "src/typing-line.txt",
-      },
-      {
-        id: "signal",
-        title: "Character wave",
-        svg: "signal.svg",
-        source: "src/signal.txt",
-      },
-    ],
-  };
-  writeFile("manifest.json", JSON.stringify(manifest, null, 2) + "\n");
+  const srcDir = path.join(ROOT, "src");
+  const sources = fs
+    .readdirSync(srcDir)
+    .filter((name) => name.endsWith(".txt") && name !== "cursor-logo.txt")
+    .sort();
+
+  for (const name of sources) {
+    const id = name.slice(0, -".txt".length);
+    const source = fs.readFileSync(path.join(srcDir, name), "utf8");
+    const { meta } = parseFrontMatter(source);
+    writeFile(`${id}.svg`, buildFromSource(id, source));
+    items.push({
+      id,
+      title: meta.title || id,
+      svg: `${id}.svg`,
+      source: `src/${name}`,
+    });
+  }
+
+  writeFile("manifest.json", JSON.stringify({ generatedBy: "ascii/generate.mjs", items }, null, 2) + "\n");
   console.log("Wrote character animations:");
-  for (const item of manifest.items) console.log(" -", item.svg);
+  for (const item of items) console.log(" -", item.svg);
 }
 
 main();

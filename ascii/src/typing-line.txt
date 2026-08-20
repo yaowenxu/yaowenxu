@@ -1,11 +1,11 @@
-# title: Typing line
+# title: building with Cursor
 # kind: typewriter
 # fontSize: 16
-# lineHeight: 28
-# period: 4.5
+# lineHeight: 26
+# period: 3.6
 
-Thinking, Coding, Writing, and Improving.
+building with Cursor
 # ---
-Built with Cursor, shown in characters.
+thinking with Cursor
 # ---
-Always learning. Always shipping.
+shipping with Cursor

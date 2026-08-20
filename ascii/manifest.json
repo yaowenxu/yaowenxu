@@ -9,15 +9,9 @@
     },
     {
       "id": "typing-line",
-      "title": "Typing line",
+      "title": "building with Cursor",
       "svg": "typing-line.svg",
       "source": "src/typing-line.txt"
-    },
-    {
-      "id": "signal",
-      "title": "Character wave",
-      "svg": "signal.svg",
-      "source": "src/signal.txt"
     }
   ]
 }

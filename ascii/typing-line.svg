@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="449" height="48" viewBox="0 0 449 48" role="img" aria-labelledby="title">
-  <title id="title">Typing line</title>
+<svg xmlns="http://www.w3.org/2000/svg" width="280" height="46" viewBox="0 0 280 46" role="img" aria-labelledby="title">
+  <title id="title">building with Cursor</title>
   <style>
     :root { color-scheme: light dark; }
     .fg { fill: #1f2328; }
@@ -15,22 +15,33 @@
       font-variant-ligatures: none;
     }
     text { font-size: 16px; }
-    .phrase {
-      opacity: 0;
-      clip-path: inset(0 100% 0 0);
-      animation: type 13.5s steps(41, end) infinite;
+    .phrase:nth-of-type(1) { opacity: 1; }
+    .phrase { opacity: 0; }
+    @media (prefers-reduced-motion: no-preference) {
+      .phrase {
+        opacity: 0;
+        clip-path: inset(0 100% 0 0);
+        animation: type 10.8s steps(24, end) infinite;
+      }
     }
     @keyframes type {
       0% { opacity: 0; clip-path: inset(0 100% 0 0); }
       1% { opacity: 1; clip-path: inset(0 100% 0 0); }
-      26.67% { opacity: 1; clip-path: inset(0 0 0 0); }
-      31.11% { opacity: 1; clip-path: inset(0 100% 0 0); }
+      25.00% { opacity: 1; clip-path: inset(0 0 0 0); }
+      30.56% { opacity: 1; clip-path: inset(0 100% 0 0); }
       33.33%, 100% { opacity: 0; clip-path: inset(0 100% 0 0); }
     }
-    .blink { animation: blink 1.05s step-end infinite; }
+    .blink { animation: none; }
+    @media (prefers-reduced-motion: no-preference) {
+      .blink { animation: blink 1.05s step-end infinite; }
+    }
     @keyframes blink { 50% { opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) {
+      .phrase { animation: none; }
+      .phrase:nth-of-type(1) { opacity: 1; clip-path: none; }
+    }
   </style>
-    <text class="fg phrase" x="16" y="26" xml:space="preserve" style="animation-delay:0.00s" textLength="416.6" lengthAdjust="spacing">Thinking, Coding, Writing, and Improving.<tspan class="blink">█</tspan></text>
-    <text class="fg phrase" x="16" y="26" xml:space="preserve" style="animation-delay:-9.00s" textLength="416.6" lengthAdjust="spacing">Built with Cursor, shown in characters.  <tspan class="blink">█</tspan></text>
-    <text class="fg phrase" x="16" y="26" xml:space="preserve" style="animation-delay:-4.50s" textLength="416.6" lengthAdjust="spacing">Always learning. Always shipping.        <tspan class="blink">█</tspan></text>
+    <text class="fg phrase" x="16" y="26" xml:space="preserve" style="animation-delay:0.00s" textLength="248.0" lengthAdjust="spacing">building with Cursor    <tspan class="blink">█</tspan></text>
+    <text class="fg phrase" x="16" y="26" xml:space="preserve" style="animation-delay:-7.20s" textLength="248.0" lengthAdjust="spacing">thinking with Cursor    <tspan class="blink">█</tspan></text>
+    <text class="fg phrase" x="16" y="26" xml:space="preserve" style="animation-delay:-3.60s" textLength="248.0" lengthAdjust="spacing">shipping with Cursor    <tspan class="blink">█</tspan></text>
 </svg>
