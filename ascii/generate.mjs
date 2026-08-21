@@ -5,8 +5,8 @@
  *   node ascii/generate.mjs
  *
  * SVGs use CSS only (no JavaScript) so they play inside README.md.
- * The homepage lockup is the official 2.5D cube plus the generated
- * outlined CURSOR wordmark on one row.
+ * The homepage lockup is one SVG (official 2.5D cube + outlined CURSOR
+ * wordmark) so GitHub cannot stack the two marks as separate block images.
  */
 
 import fs from "node:fs";
@@ -294,6 +294,58 @@ function writeFile(rel, contents) {
   return dest;
 }
 
+const CUBE_FILE = "cursor-cube-25d.svg";
+const LOCKUP_FILE = "cursor-lockup.svg";
+const LOCKUP_HEIGHT = 148;
+const LOCKUP_GAP = 8;
+
+function parseSvgParts(svg) {
+  const open = svg.match(/<svg\b[^>]*>/);
+  if (!open) throw new Error("missing <svg> root");
+  const attrs = open[0];
+  const viewBoxMatch = attrs.match(/\bviewBox="([^"]+)"/);
+  if (!viewBoxMatch) throw new Error("missing viewBox");
+  const [x, y, w, h] = viewBoxMatch[1].trim().split(/[\s,]+/).map(Number);
+  const inner = svg
+    .slice(svg.indexOf(open[0]) + open[0].length)
+    .replace(/<\/svg>\s*$/, "")
+    .replace(/<title\b[^>]*>[\s\S]*?<\/title>/, "")
+    .replace(/<rect\b[^>]*fill="transparent"[^>]*\/?>/, "")
+    .trim();
+  return { viewBox: { x, y, w, h }, inner };
+}
+
+function indentBlock(text, spaces) {
+  const pad = " ".repeat(spaces);
+  return text
+    .split("\n")
+    .map((line) => (line.length ? pad + line : line))
+    .join("\n");
+}
+
+function buildLockupSvg(cubeSvg, wordmarkSvg, { height = LOCKUP_HEIGHT, gap = LOCKUP_GAP } = {}) {
+  const cube = parseSvgParts(cubeSvg);
+  const word = parseSvgParts(wordmarkSvg);
+  const cubeW = (cube.viewBox.w / cube.viewBox.h) * height;
+  const wordW = (word.viewBox.w / word.viewBox.h) * height;
+  const width = cubeW + gap + wordW;
+  const cubeViewBox = `${cube.viewBox.x} ${cube.viewBox.y} ${cube.viewBox.w} ${cube.viewBox.h}`;
+  const wordViewBox = `${word.viewBox.x} ${word.viewBox.y} ${word.viewBox.w} ${word.viewBox.h}`;
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="${Math.round(width)}" height="${height}" viewBox="0 0 ${width.toFixed(2)} ${height}" role="img" aria-labelledby="title">
+  <title id="title">Cursor</title>
+  <!-- Single image: GitHub cannot wrap the cube and wordmark onto two rows. -->
+  <svg x="0" y="0" width="${cubeW.toFixed(2)}" height="${height}" viewBox="${cubeViewBox}">
+${indentBlock(cube.inner, 4)}
+  </svg>
+  <svg x="${(cubeW + gap).toFixed(2)}" y="0" width="${wordW.toFixed(2)}" height="${height}" viewBox="${wordViewBox}">
+${indentBlock(word.inner, 4)}
+  </svg>
+</svg>
+`;
+}
+
 function buildFromSource(id, source) {
   const { meta } = parseFrontMatter(source);
   if (meta.kind === "wordmark") return buildWordmarkSvg(id, source);
@@ -310,11 +362,14 @@ function main() {
     .filter((name) => name.endsWith(".txt"))
     .sort();
 
+  let wordmarkSvg = null;
   for (const name of sources) {
     const id = name.slice(0, -".txt".length);
     const source = fs.readFileSync(path.join(srcDir, name), "utf8");
     const { meta } = parseFrontMatter(source);
-    writeFile(`${id}.svg`, buildFromSource(id, source));
+    const svg = buildFromSource(id, source);
+    writeFile(`${id}.svg`, svg);
+    if (id === "cursor-wordmark") wordmarkSvg = svg;
     items.push({
       id,
       title: meta.title || id,
@@ -322,6 +377,20 @@ function main() {
       source: `src/${name}`,
     });
   }
+
+  const cubePath = path.join(ROOT, CUBE_FILE);
+  if (!wordmarkSvg) throw new Error("missing cursor-wordmark source");
+  if (!fs.existsSync(cubePath)) throw new Error(`missing ${CUBE_FILE}`);
+  writeFile(
+    LOCKUP_FILE,
+    buildLockupSvg(fs.readFileSync(cubePath, "utf8"), wordmarkSvg),
+  );
+  items.push({
+    id: "cursor-lockup",
+    title: "Cursor",
+    svg: LOCKUP_FILE,
+    source: `${CUBE_FILE} + cursor-wordmark.svg`,
+  });
 
   writeFile(
     "manifest.json",
