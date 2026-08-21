@@ -5,7 +5,8 @@
  *   node ascii/generate.mjs
  *
  * SVGs use CSS only (no JavaScript) so they play inside README.md.
- * The homepage Cursor mark is the official 2.5D cube SVG, not generated here.
+ * The homepage lockup is the official 2.5D cube plus the generated
+ * outlined CURSOR wordmark on one row.
  */
 
 import fs from "node:fs";
@@ -98,6 +99,57 @@ function splitFrames(body) {
     .split(/\n# ---\n/)
     .map((frame) => frame.replace(/\n+$/, "").replace(/^\n+/, ""))
     .filter((frame) => frame.length > 0);
+}
+
+function buildWordmarkSvg(id, source) {
+  const { meta, body } = parseFrontMatter(source);
+  const lines = body
+    .split("\n")
+    .map((line) => line.replace(/\s+$/, ""))
+    .filter((line) => line.length > 0);
+  if (!lines.length) throw new Error(`wordmark "${id}" has no lines`);
+
+  const fontSize = Number(meta.fontSize || 15);
+  const lineHeight = Number(meta.lineHeight || 17);
+  const padX = 12;
+  const cols = Math.max(...lines.map(visibleLen)) + 1;
+  const padded = lines.map((line) => padEndVisible(line, cols));
+  const charW = fontSize * 0.62;
+  const contentH = padded.length * lineHeight;
+  const height = Number(meta.height || Math.ceil(contentH + 24));
+  const padY = Math.max(8, (height - contentH) / 2);
+  const width = Math.ceil(padX * 2 + cols * charW);
+  const textLength = (cols * charW).toFixed(1);
+  const blinkRow = padded.length - 1;
+
+  const nodes = padded
+    .map((line, i) => {
+      const y = padY + fontSize + i * lineHeight;
+      const blinking = i === blinkRow;
+      return textEl({
+        cls: "fg line",
+        x: padX,
+        y,
+        line: blinking ? line.slice(0, -1) : line,
+        extra: blinking ? `<tspan class="blink">█</tspan>` : "",
+        textLength,
+      });
+    })
+    .join("\n");
+
+  return svgDoc({
+    title: meta.title || id,
+    width,
+    height: Math.ceil(height),
+    fontSize,
+    extraCss: `.line { animation: none; }
+    .blink { animation: none; }
+    @media (prefers-reduced-motion: no-preference) {
+      .blink { animation: blink 1.05s step-end infinite; }
+    }
+    @keyframes blink { 50% { opacity: 0; } }`,
+    body: nodes,
+  });
 }
 
 function buildTypewriterSvg(id, source) {
@@ -244,6 +296,7 @@ function writeFile(rel, contents) {
 
 function buildFromSource(id, source) {
   const { meta } = parseFrontMatter(source);
+  if (meta.kind === "wordmark") return buildWordmarkSvg(id, source);
   if (meta.kind === "typewriter") return buildTypewriterSvg(id, source);
   if (meta.kind === "frames") return buildFramesSvg(id, source);
   throw new Error(`unknown kind "${meta.kind || ""}" in ${id}`);

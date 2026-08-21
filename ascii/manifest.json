@@ -2,6 +2,12 @@
   "generatedBy": "ascii/generate.mjs",
   "items": [
     {
+      "id": "cursor-wordmark",
+      "title": "CURSOR",
+      "svg": "cursor-wordmark.svg",
+      "source": "src/cursor-wordmark.txt"
+    },
+    {
       "id": "typing-line",
       "title": "building with Cursor",
       "svg": "typing-line.svg",
