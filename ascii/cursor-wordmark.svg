@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="378" height="148" viewBox="0 0 378 148" role="img" aria-labelledby="title">
+  <title id="title">CURSOR</title>
+  <style>
+    :root { color-scheme: light dark; }
+    .fg { fill: #1f2328; }
+    .muted { fill: #656d76; }
+    @media (prefers-color-scheme: dark) {
+      .fg { fill: #e6edf3; }
+      .muted { fill: #8b949e; }
+    }
+    text {
+      font-family: "Courier New", Courier, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-kerning: none;
+      font-variant-ligatures: none;
+    }
+    text { font-size: 15px; }
+    .line { animation: none; }
+    .blink { animation: none; }
+    @media (prefers-reduced-motion: no-preference) {
+      .blink { animation: blink 1.05s step-end infinite; }
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+  </style>
+  <rect width="100%" height="100%" fill="transparent"/>
+    <text class="fg line" x="12" y="46.5" xml:space="preserve" textLength="353.4" lengthAdjust="spacing">  ____ _   _ ____  ____   ___  ____   </text>
+    <text class="fg line" x="12" y="63.5" xml:space="preserve" textLength="353.4" lengthAdjust="spacing"> / ___| | | |  _ \/ ___| / _ \|  _ \  </text>
+    <text class="fg line" x="12" y="80.5" xml:space="preserve" textLength="353.4" lengthAdjust="spacing">| |   | | | | |_) \___ \| | | | |_) | </text>
+    <text class="fg line" x="12" y="97.5" xml:space="preserve" textLength="353.4" lengthAdjust="spacing">| |___| |_| |  _ &lt; ___) | |_| |  _ &lt;  </text>
+    <text class="fg line" x="12" y="114.5" xml:space="preserve" textLength="353.4" lengthAdjust="spacing"> \____|\___/|_| \_\____/ \___/|_| \_\<tspan class="blink">█</tspan></text>
+</svg>

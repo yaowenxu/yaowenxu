@@ -5,6 +5,8 @@
  *   node ascii/generate.mjs
  *
  * SVGs use CSS only (no JavaScript) so they play inside README.md.
+ * The homepage lockup is the official 2.5D cube plus the generated
+ * outlined CURSOR wordmark on one row.
  */
 
 import fs from "node:fs";
@@ -22,75 +24,6 @@ const COLORS = {
   darkMuted: "#8b949e",
 };
 
-/** Canonical Cursor mark from the simple-icons path (viewBox 0 0 24 24). */
-const CURSOR_FACES = [
-  {
-    ch: "░",
-    pts: [
-      [11.925, 24],
-      [22.35, 17.988],
-      [11.925, 11.976],
-      [1.5, 17.988],
-    ],
-  },
-  {
-    ch: "▒",
-    pts: [
-      [23.85, 17.988],
-      [23.85, 6.012],
-      [13.5, 0],
-      [13.5, 11.976],
-    ],
-  },
-  {
-    ch: "█",
-    pts: [
-      [0, 6.012],
-      [0, 17.988],
-      [10.425, 11.976],
-      [10.425, 0],
-    ],
-  },
-];
-
-const CURSOR_WORDMARK = [
-  "  ____ _   _ ____  ____   ___  ____",
-  " / ___| | | |  _ \\/ ___| / _ \\|  _ \\",
-  "| |   | | | | |_) \\___ \\| | | | |_) |",
-  "| |___| |_| |  _ < ___) | |_| |  _ <",
-  " \\____|\\___/|_| \\_\\____/ \\___/|_| \\_\\",
-];
-
-function pointInPolygon(x, y, poly) {
-  let inside = false;
-  for (let i = 0, j = poly.length - 1; i < poly.length; j = i++) {
-    const [xi, yi] = poly[i];
-    const [xj, yj] = poly[j];
-    const intersect =
-      yi > y !== yj > y &&
-      x < ((xj - xi) * (y - yi)) / (yj - yi + 1e-12) + xi;
-    if (intersect) inside = !inside;
-  }
-  return inside;
-}
-
-function rasterizeCursorLogo(cols = 36, rows = 16) {
-  const grid = Array.from({ length: rows }, () => Array(cols).fill(" "));
-  for (let r = 0; r < rows; r++) {
-    for (let c = 0; c < cols; c++) {
-      const x = ((c + 0.5) / cols) * 24;
-      const y = ((r + 0.5) / rows) * 24;
-      for (const face of CURSOR_FACES) {
-        if (pointInPolygon(x, y, face.pts)) grid[r][c] = face.ch;
-      }
-    }
-  }
-  const lines = grid.map((row) => row.join("").replace(/\s+$/, ""));
-  while (lines.length && !lines[0].trim()) lines.shift();
-  while (lines.length && !lines[lines.length - 1].trim()) lines.pop();
-  return lines;
-}
-
 function visibleLen(line) {
   return Array.from(line).length;
 }
@@ -98,22 +31,6 @@ function visibleLen(line) {
 function padEndVisible(line, width) {
   const extra = width - visibleLen(line);
   return extra > 0 ? line + " ".repeat(extra) : line;
-}
-
-function joinHorizontal(left, right, gap = 4) {
-  const height = Math.max(left.length, right.length);
-  const leftW = Math.max(0, ...left.map(visibleLen));
-  const topLeft = Math.floor((height - left.length) / 2);
-  const topRight = Math.floor((height - right.length) / 2);
-  const spacer = " ".repeat(gap);
-  const lines = [];
-  for (let i = 0; i < height; i++) {
-    const l = i >= topLeft && i - topLeft < left.length ? left[i - topLeft] : "";
-    const r =
-      i >= topRight && i - topRight < right.length ? right[i - topRight] : "";
-    lines.push(padEndVisible(l, leftW) + spacer + r);
-  }
-  return lines;
 }
 
 function escapeXml(text) {
@@ -161,67 +78,6 @@ ${body}
 `;
 }
 
-function buildCursorLogoSvg() {
-  const logo = rasterizeCursorLogo(36, 16);
-  const right = CURSOR_WORDMARK;
-  const lines = joinHorizontal(logo, right, 5);
-  const cols = Math.max(...lines.map(visibleLen));
-  // Pad every row to cols+1 so the blink glyph can replace the last cell
-  // without changing textLength / column spacing on the other rows.
-  const padded = lines.map((line) => padEndVisible(line, cols + 1));
-  const fontSize = 13;
-  const lineHeight = 14;
-  const padX = 24;
-  const padY = 18;
-  const charW = fontSize * 0.62;
-  const width = Math.ceil(padX * 2 + (cols + 1) * charW + 12);
-  const height = Math.ceil(padY * 2 + padded.length * lineHeight);
-  const lastMark = CURSOR_WORDMARK.length - 1;
-  const rightTop = Math.floor((padded.length - right.length) / 2);
-  const blinkRow = rightTop + lastMark;
-  const textLength = ((cols + 1) * charW).toFixed(1);
-
-  const body = padded
-    .map((line, i) => {
-      const y = padY + fontSize + i * lineHeight;
-      const delay = (i * 0.05).toFixed(2);
-      const blinking = i === blinkRow;
-      return textEl({
-        cls: "fg line",
-        x: padX,
-        y,
-        line: blinking ? line.slice(0, -1) : line,
-        extra: blinking ? `<tspan class="blink">█</tspan>` : "",
-        style: `animation-delay:${delay}s`,
-        textLength,
-      });
-    })
-    .join("\n");
-
-  return svgDoc({
-    title: "Cursor character logo",
-    width,
-    height,
-    fontSize,
-    extraCss: `.line { animation: none; }
-    @media (prefers-reduced-motion: no-preference) {
-      .line {
-        animation: reveal 0.9s steps(${cols}, end) both;
-      }
-    }
-    @keyframes reveal {
-      from { clip-path: inset(0 100% 0 0); }
-      to { clip-path: inset(0 0 0 0); }
-    }
-    .blink { animation: none; }
-    @media (prefers-reduced-motion: no-preference) {
-      .blink { animation: blink 1.05s step-end infinite; }
-    }
-    @keyframes blink { 50% { opacity: 0; } }`,
-    body,
-  });
-}
-
 function parseFrontMatter(source) {
   const lines = source.replaceAll("\r\n", "\n").split("\n");
   const meta = {};
@@ -243,6 +99,57 @@ function splitFrames(body) {
     .split(/\n# ---\n/)
     .map((frame) => frame.replace(/\n+$/, "").replace(/^\n+/, ""))
     .filter((frame) => frame.length > 0);
+}
+
+function buildWordmarkSvg(id, source) {
+  const { meta, body } = parseFrontMatter(source);
+  const lines = body
+    .split("\n")
+    .map((line) => line.replace(/\s+$/, ""))
+    .filter((line) => line.length > 0);
+  if (!lines.length) throw new Error(`wordmark "${id}" has no lines`);
+
+  const fontSize = Number(meta.fontSize || 15);
+  const lineHeight = Number(meta.lineHeight || 17);
+  const padX = 12;
+  const cols = Math.max(...lines.map(visibleLen)) + 1;
+  const padded = lines.map((line) => padEndVisible(line, cols));
+  const charW = fontSize * 0.62;
+  const contentH = padded.length * lineHeight;
+  const height = Number(meta.height || Math.ceil(contentH + 24));
+  const padY = Math.max(8, (height - contentH) / 2);
+  const width = Math.ceil(padX * 2 + cols * charW);
+  const textLength = (cols * charW).toFixed(1);
+  const blinkRow = padded.length - 1;
+
+  const nodes = padded
+    .map((line, i) => {
+      const y = padY + fontSize + i * lineHeight;
+      const blinking = i === blinkRow;
+      return textEl({
+        cls: "fg line",
+        x: padX,
+        y,
+        line: blinking ? line.slice(0, -1) : line,
+        extra: blinking ? `<tspan class="blink">█</tspan>` : "",
+        textLength,
+      });
+    })
+    .join("\n");
+
+  return svgDoc({
+    title: meta.title || id,
+    width,
+    height: Math.ceil(height),
+    fontSize,
+    extraCss: `.line { animation: none; }
+    .blink { animation: none; }
+    @media (prefers-reduced-motion: no-preference) {
+      .blink { animation: blink 1.05s step-end infinite; }
+    }
+    @keyframes blink { 50% { opacity: 0; } }`,
+    body: nodes,
+  });
 }
 
 function buildTypewriterSvg(id, source) {
@@ -387,66 +294,20 @@ function writeFile(rel, contents) {
   return dest;
 }
 
-function decodeXml(text) {
-  return text
-    .replaceAll("&lt;", "<")
-    .replaceAll("&gt;", ">")
-    .replaceAll("&amp;", "&");
-}
-
-function logoLineGlyphCounts(svg) {
-  return [...svg.matchAll(/<text class="fg line"[^>]*>([\s\S]*?)<\/text>/g)].map(
-    ([, inner]) => visibleLen(decodeXml(inner.replace(/<[^>]+>/g, ""))),
-  );
-}
-
-function assertAlignedLogoLines(svg) {
-  const counts = logoLineGlyphCounts(svg);
-  if (!counts.length) throw new Error("logo SVG has no text lines");
-  if (counts.some((n) => n !== counts[0])) {
-    throw new Error(`logo glyph counts diverge: ${counts.join(",")}`);
-  }
-}
-
 function buildFromSource(id, source) {
   const { meta } = parseFrontMatter(source);
+  if (meta.kind === "wordmark") return buildWordmarkSvg(id, source);
   if (meta.kind === "typewriter") return buildTypewriterSvg(id, source);
   if (meta.kind === "frames") return buildFramesSvg(id, source);
   throw new Error(`unknown kind "${meta.kind || ""}" in ${id}`);
 }
 
 function main() {
-  const logo = rasterizeCursorLogo(36, 16);
-  const lockup = joinHorizontal(logo, CURSOR_WORDMARK, 5);
-  writeFile(
-    "src/cursor-logo.txt",
-    [
-      "# title: Cursor character logo",
-      "# kind: cursor-logo",
-      "# Generated from the canonical Cursor mark (simple-icons path).",
-      "# Re-run node ascii/generate.mjs after editing generate.mjs.",
-      "",
-      ...lockup,
-      "",
-    ].join("\n"),
-  );
-
-  const items = [
-    {
-      id: "cursor-logo",
-      title: "Cursor character logo",
-      svg: "cursor-logo.svg",
-      source: "src/cursor-logo.txt",
-    },
-  ];
-  const logoSvg = buildCursorLogoSvg();
-  writeFile("cursor-logo.svg", logoSvg);
-  assertAlignedLogoLines(logoSvg);
-
+  const items = [];
   const srcDir = path.join(ROOT, "src");
   const sources = fs
     .readdirSync(srcDir)
-    .filter((name) => name.endsWith(".txt") && name !== "cursor-logo.txt")
+    .filter((name) => name.endsWith(".txt"))
     .sort();
 
   for (const name of sources) {
@@ -462,7 +323,10 @@ function main() {
     });
   }
 
-  writeFile("manifest.json", JSON.stringify({ generatedBy: "ascii/generate.mjs", items }, null, 2) + "\n");
+  writeFile(
+    "manifest.json",
+    JSON.stringify({ generatedBy: "ascii/generate.mjs", items }, null, 2) + "\n",
+  );
   console.log("Wrote character animations:");
   for (const item of items) console.log(" -", item.svg);
 }
