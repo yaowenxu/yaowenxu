@@ -12,6 +12,12 @@
       "title": "building with Cursor",
       "svg": "typing-line.svg",
       "source": "src/typing-line.txt"
+    },
+    {
+      "id": "cursor-lockup",
+      "title": "Cursor",
+      "svg": "cursor-lockup.svg",
+      "source": "cursor-cube-25d.svg + cursor-wordmark.svg"
     }
   ]
 }

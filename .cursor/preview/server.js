@@ -68,6 +68,12 @@ function renderPage() {
   body { margin: 0; background: #ffffff; }
   .markdown-body { box-sizing: border-box; max-width: 980px; margin: 0 auto; padding: 45px; }
   @media (max-width: 767px) { .markdown-body { padding: 15px; } }
+  /* GitHub README: imgs with both width and height become block-level. */
+  .markdown-body img[width][height] {
+    display: block;
+    max-width: 100%;
+    height: auto;
+  }
 </style>
 </head>
 <body>
