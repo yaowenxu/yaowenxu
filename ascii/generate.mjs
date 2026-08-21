@@ -22,36 +22,69 @@ const COLORS = {
   darkMuted: "#8b949e",
 };
 
-/** Canonical Cursor mark from the simple-icons path (viewBox 0 0 24 24). */
+/**
+ * Canonical Cursor cube from the official brand kit (CUBE_2D_LIGHT.svg /
+ * CUBE_25D.svg). The mark is an isometric hexagon with a cursor-arrow
+ * cutout — the three cube faces without that arrow are not the logo.
+ *
+ * viewBox 0 0 466.73 532.09. Tiny corner radii are collapsed to vertices.
+ */
+const CURSOR_VIEW = { w: 466.73, h: 532.09 };
+const CURSOR_CENTER = [233.365, 266.045];
+
+const CURSOR_OUTER = [
+  [233.37, 2.96],
+  [9.3, 125.94],
+  [9.3, 406.15],
+  [233.37, 529.13],
+  [457.43, 406.15],
+  [457.43, 125.94],
+];
+
+const CURSOR_ARROW = [
+  [26.23, 140.61],
+  [437.49, 140.61],
+  [444.05, 151.99],
+  [238.42, 508.15],
+  [238.42, 272.22],
+  [231.89, 260.91],
+  [24.87, 145.67],
+];
+
 const CURSOR_FACES = [
   {
     ch: "░",
     pts: [
-      [11.925, 24],
-      [22.35, 17.988],
-      [11.925, 11.976],
-      [1.5, 17.988],
-    ],
-  },
-  {
-    ch: "▒",
-    pts: [
-      [23.85, 17.988],
-      [23.85, 6.012],
-      [13.5, 0],
-      [13.5, 11.976],
+      CURSOR_CENTER,
+      [457.43, 406.15],
+      [233.37, 529.13],
+      [9.3, 406.15],
     ],
   },
   {
     ch: "█",
     pts: [
-      [0, 6.012],
-      [0, 17.988],
-      [10.425, 11.976],
-      [10.425, 0],
+      [233.37, 2.96],
+      [457.43, 125.94],
+      [457.43, 406.15],
+      CURSOR_CENTER,
+    ],
+  },
+  {
+    ch: "▒",
+    pts: [
+      [233.37, 2.96],
+      CURSOR_CENTER,
+      [9.3, 406.15],
+      [9.3, 125.94],
     ],
   },
 ];
+
+const LOGO_FONT_SIZE = 13;
+const LOGO_LINE_HEIGHT = 14;
+const LOGO_CHAR_ASPECT = 0.62;
+const LOGO_ROWS = 20;
 
 const CURSOR_WORDMARK = [
   "  ____ _   _ ____  ____   ___  ____",
@@ -74,15 +107,46 @@ function pointInPolygon(x, y, poly) {
   return inside;
 }
 
-function rasterizeCursorLogo(cols = 36, rows = 16) {
+function logoCols(rows = LOGO_ROWS) {
+  return Math.round(
+    rows *
+      (CURSOR_VIEW.w / CURSOR_VIEW.h) *
+      (LOGO_LINE_HEIGHT / (LOGO_FONT_SIZE * LOGO_CHAR_ASPECT)),
+  );
+}
+
+function sampleCursorGlyph(x, y) {
+  if (!pointInPolygon(x, y, CURSOR_OUTER) || pointInPolygon(x, y, CURSOR_ARROW)) {
+    return " ";
+  }
+  for (const face of CURSOR_FACES) {
+    if (pointInPolygon(x, y, face.pts)) return face.ch;
+  }
+  return "▒";
+}
+
+function rasterizeCursorLogo(cols = logoCols(), rows = LOGO_ROWS, sub = 3) {
   const grid = Array.from({ length: rows }, () => Array(cols).fill(" "));
   for (let r = 0; r < rows; r++) {
     for (let c = 0; c < cols; c++) {
-      const x = ((c + 0.5) / cols) * 24;
-      const y = ((r + 0.5) / rows) * 24;
-      for (const face of CURSOR_FACES) {
-        if (pointInPolygon(x, y, face.pts)) grid[r][c] = face.ch;
+      const counts = new Map();
+      for (let sy = 0; sy < sub; sy++) {
+        for (let sx = 0; sx < sub; sx++) {
+          const x = ((c + (sx + 0.5) / sub) / cols) * CURSOR_VIEW.w;
+          const y = ((r + (sy + 0.5) / sub) / rows) * CURSOR_VIEW.h;
+          const ch = sampleCursorGlyph(x, y);
+          counts.set(ch, (counts.get(ch) || 0) + 1);
+        }
       }
+      let best = " ";
+      let n = -1;
+      for (const [ch, k] of counts) {
+        if (k > n || (k === n && ch !== " ")) {
+          best = ch;
+          n = k;
+        }
+      }
+      grid[r][c] = best;
     }
   }
   const lines = grid.map((row) => row.join("").replace(/\s+$/, ""));
@@ -162,18 +226,18 @@ ${body}
 }
 
 function buildCursorLogoSvg() {
-  const logo = rasterizeCursorLogo(36, 16);
+  const logo = rasterizeCursorLogo();
   const right = CURSOR_WORDMARK;
   const lines = joinHorizontal(logo, right, 5);
   const cols = Math.max(...lines.map(visibleLen));
   // Pad every row to cols+1 so the blink glyph can replace the last cell
   // without changing textLength / column spacing on the other rows.
   const padded = lines.map((line) => padEndVisible(line, cols + 1));
-  const fontSize = 13;
-  const lineHeight = 14;
+  const fontSize = LOGO_FONT_SIZE;
+  const lineHeight = LOGO_LINE_HEIGHT;
   const padX = 24;
   const padY = 18;
-  const charW = fontSize * 0.62;
+  const charW = fontSize * LOGO_CHAR_ASPECT;
   const width = Math.ceil(padX * 2 + (cols + 1) * charW + 12);
   const height = Math.ceil(padY * 2 + padded.length * lineHeight);
   const lastMark = CURSOR_WORDMARK.length - 1;
@@ -400,6 +464,19 @@ function logoLineGlyphCounts(svg) {
   );
 }
 
+function assertCursorCutout(lines) {
+  const holeRows = lines.filter((line) => /[█▒░]\s{4,}[█▒░]/.test(line)).length;
+  if (holeRows < 4) {
+    throw new Error(
+      `logo is missing the cursor-arrow cutout (hole rows: ${holeRows})`,
+    );
+  }
+  const glyphs = new Set(lines.join(""));
+  for (const ch of ["█", "▒", "░"]) {
+    if (!glyphs.has(ch)) throw new Error(`logo is missing face glyph ${ch}`);
+  }
+}
+
 function assertAlignedLogoLines(svg) {
   const counts = logoLineGlyphCounts(svg);
   if (!counts.length) throw new Error("logo SVG has no text lines");
@@ -416,14 +493,16 @@ function buildFromSource(id, source) {
 }
 
 function main() {
-  const logo = rasterizeCursorLogo(36, 16);
+  const logo = rasterizeCursorLogo();
+  assertCursorCutout(logo);
   const lockup = joinHorizontal(logo, CURSOR_WORDMARK, 5);
   writeFile(
     "src/cursor-logo.txt",
     [
       "# title: Cursor character logo",
       "# kind: cursor-logo",
-      "# Generated from the canonical Cursor mark (simple-icons path).",
+      "# Generated from the official Cursor cube (brand kit CUBE_2D / CUBE_25D).",
+      "# The mark is the isometric cube with a cursor-arrow cutout.",
       "# Re-run node ascii/generate.mjs after editing generate.mjs.",
       "",
       ...lockup,

@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="ascii/cursor-logo.svg" width="697" height="260" alt="Cursor character logo" />
+  <img src="ascii/cursor-logo.svg" width="641" height="316" alt="Cursor character logo" />
   <br />
   <img src="ascii/typing-line.svg" width="280" height="46" alt="building with Cursor" />
 </div>

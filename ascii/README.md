@@ -26,8 +26,9 @@ folder:
 
 Source notes:
 
-- `src/cursor-logo.txt` is generated from the canonical Cursor mark inside
-  `generate.mjs`. Edit the rasterizer or wordmark there, then regenerate.
+- `src/cursor-logo.txt` is generated from the official Cursor cube (isometric
+  hexagon with a cursor-arrow cutout) inside `generate.mjs`. Edit the
+  rasterizer or wordmark there, then regenerate.
 - `src/typing-line.txt` is a looping typewriter. Split phrases with `# ---`.
 
 Front matter (lines starting with `# key: value`) sets title, font size, and
