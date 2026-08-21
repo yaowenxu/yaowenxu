@@ -2,12 +2,6 @@
   "generatedBy": "ascii/generate.mjs",
   "items": [
     {
-      "id": "cursor-logo",
-      "title": "Cursor character logo",
-      "svg": "cursor-logo.svg",
-      "source": "src/cursor-logo.txt"
-    },
-    {
       "id": "typing-line",
       "title": "building with Cursor",
       "svg": "typing-line.svg",
